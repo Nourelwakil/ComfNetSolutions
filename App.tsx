@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Header from './components/Header';
 import DashboardView from './components/DashboardView';
 import MyTasksView from './components/MyTasksView';
@@ -14,12 +14,30 @@ import { Member, Task, Comment, Status, Role, Team } from './types';
 
 type View = 'dashboard' | 'my-tasks' | 'members' | 'completed-tasks';
 
+const getInitialState = <T,>(key: string, defaultValue: T): T => {
+  try {
+    const storedValue = localStorage.getItem(key);
+    if (storedValue) {
+      return JSON.parse(storedValue) as T;
+    }
+  } catch (error) {
+    console.error(`Error reading from localStorage for key "${key}":`, error);
+  }
+  return defaultValue;
+};
+
+
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<Member | null>(null);
-  const [members, setMembers] = useState<Member[]>(initialMembers);
-  const [teams, setTeams] = useState<Team[]>(initialTeams);
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [comments, setComments] = useState<{ [taskId: string]: Comment[] }>(initialComments);
+  const [members, setMembers] = useState<Member[]>(() => getInitialState('members', initialMembers));
+  const [teams, setTeams] = useState<Team[]>(() => getInitialState('teams', initialTeams));
+  const [tasks, setTasks] = useState<Task[]>(() => getInitialState('tasks', initialTasks));
+  const [comments, setComments] = useState<{ [taskId: string]: Comment[] }>(() => getInitialState('comments', initialComments));
+
+  useEffect(() => { localStorage.setItem('members', JSON.stringify(members)); }, [members]);
+  useEffect(() => { localStorage.setItem('teams', JSON.stringify(teams)); }, [teams]);
+  useEffect(() => { localStorage.setItem('tasks', JSON.stringify(tasks)); }, [tasks]);
+  useEffect(() => { localStorage.setItem('comments', JSON.stringify(comments)); }, [comments]);
 
   const [activeView, setActiveView] = useState<View>('dashboard');
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -70,8 +88,8 @@ const App: React.FC = () => {
     setSelectedTaskId(null);
   };
   
-  const handleAddComment = (taskId: string, comment: Omit<Comment, 'id'>) => {
-    const newComment: Comment = { ...comment, id: `com-${Date.now()}` };
+  const handleAddComment = (taskId: string, comment: Omit<Comment, 'id' | 'timestamp'>) => {
+    const newComment: Comment = { ...comment, id: `com-${Date.now()}`, timestamp: new Date().toISOString() };
     setComments(currentComments => ({
         ...currentComments,
         [taskId]: [...(currentComments[taskId] || []), newComment]
@@ -119,13 +137,13 @@ const App: React.FC = () => {
     setEditingMemberId(null);
   };
   
-  const handleAddTask = (taskData: { title: string; description: string; assignedToId: string; dueDate: string; color: string; }) => {
+  const handleAddTask = (taskData: { title: string; description: string; assignedToIds: string[]; dueDate: string; color: string; }) => {
     const newTask: Task = {
       id: `task-${Date.now()}`,
       teamId: '',
       title: taskData.title,
       description: taskData.description,
-      assignedToId: taskData.assignedToId,
+      assignedToIds: taskData.assignedToIds,
       status: Status.ToDo,
       dueDate: taskData.dueDate,
       color: taskData.color,

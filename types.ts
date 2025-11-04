@@ -37,7 +37,7 @@ export interface Task {
   teamId: string;
   title: string;
   description: string;
-  assignedToId: string;
+  assignedToIds: string[];
   status: Status;
   dueDate: string;
   color?: string;

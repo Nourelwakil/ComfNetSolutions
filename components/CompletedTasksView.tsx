@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Task, Member, Status } from '../types';
 import { CheckCircleIcon } from './icons';
@@ -21,7 +22,7 @@ const CompletedTasksView: React.FC<CompletedTasksViewProps> = ({ tasks, members,
         <div className="bg-white shadow rounded-lg">
           <ul className="divide-y divide-slate-200">
             {completedTasks.map(task => {
-              const assignedTo = getMember(task.assignedToId);
+              const assignees = task.assignedToIds.map(id => getMember(id)?.name).filter(Boolean).join(', ');
               const completedBy = task.completedById ? getMember(task.completedById) : null;
               
               return (
@@ -31,16 +32,16 @@ const CompletedTasksView: React.FC<CompletedTasksViewProps> = ({ tasks, members,
                   className="p-4 cursor-pointer hover:bg-slate-50"
                 >
                   <div className="flex justify-between items-center">
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="font-semibold text-slate-800 truncate">{task.title}</p>
-                      <div className="flex items-center space-x-4 text-sm text-slate-500 mt-1">
-                        <span>Assigned to: {assignedTo?.name || 'N/A'}</span>
+                      <div className="flex items-center space-x-4 text-sm text-slate-500 mt-1 truncate">
+                        <span>Assigned to: {assignees || 'N/A'}</span>
                         {completedBy && task.completedAt && (
-                          <span>Completed by: {completedBy.name} on {new Date(task.completedAt).toLocaleDateString()}</span>
+                          <span className="flex-shrink-0">Completed by: {completedBy.name} on {new Date(task.completedAt).toLocaleDateString()}</span>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center text-green-500">
+                    <div className="flex items-center text-green-500 ml-4">
                       <CheckCircleIcon className="w-5 h-5 mr-2" />
                       <span className="text-sm font-medium">Done</span>
                     </div>

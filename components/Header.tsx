@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ activeView, setActiveView, onLogout, on
               />
               <NavItem 
                   icon={<ListIcon className="w-5 h-5" />} 
-                  label="My Tasks" 
+                  label="Active Tasks" 
                   isActive={activeView === 'my-tasks'}
                   onClick={() => setActiveView('my-tasks')}
               />

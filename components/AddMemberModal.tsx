@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XCircleIcon } from './icons';
 
@@ -35,7 +36,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ onClose, onAddMember })
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm bg-white text-black"
+                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm bg-white text-slate-900"
                 required
               />
             </div>
@@ -46,7 +47,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ onClose, onAddMember })
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm bg-white text-black"
+                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm bg-white text-slate-900"
                 required
               />
             </div>

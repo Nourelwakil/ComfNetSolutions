@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Member, Role } from '../types';
 import { XCircleIcon } from './icons';
@@ -54,7 +55,7 @@ const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, onClose, onUp
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-black"
+                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900"
                 required
               />
             </div>
@@ -65,7 +66,7 @@ const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, onClose, onUp
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-black"
+                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900"
                 required
               />
             </div>
@@ -75,7 +76,7 @@ const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, onClose, onUp
                 id="role"
                 value={role}
                 onChange={(e) => setRole(e.target.value as Role)}
-                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-black disabled:bg-slate-100"
+                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white disabled:bg-slate-100 text-slate-900"
                 disabled // For now, let's disable role change as it might have wider implications not handled.
               >
                 {Object.values(Role).map(r => <option key={r} value={r}>{r}</option>)}
