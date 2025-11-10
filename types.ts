@@ -1,5 +1,4 @@
 
-
 export enum Role {
   Owner = 'Owner',
   Member = 'Member',
@@ -18,8 +17,9 @@ export interface Member {
   name: string;
   email: string;
   avatarUrl: string;
-  password?: string;
   role: Role;
+  password?: string;
+  isDeleted?: boolean;
 }
 
 // Fix: Defined and exported the TeamMember interface to resolve a circular dependency.
@@ -30,6 +30,7 @@ export interface Comment {
   authorId: string;
   text: string;
   timestamp: string;
+  reactions?: Record<string, string[]>;
 }
 
 export interface Task {

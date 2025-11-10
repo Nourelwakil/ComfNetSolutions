@@ -6,11 +6,12 @@ import { AVATARS } from '../constants';
 
 interface MemberEditModalProps {
   member: Member;
+  currentUser: Member;
   onClose: () => void;
   onUpdateMember: (memberId: string, updates: Partial<Member>) => void;
 }
 
-const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, onClose, onUpdateMember }) => {
+const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, currentUser, onClose, onUpdateMember }) => {
   const [name, setName] = useState(member.name);
   const [email, setEmail] = useState(member.email);
   const [role, setRole] = useState(member.role);
@@ -20,6 +21,8 @@ const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, onClose, onUp
     e.preventDefault();
     onUpdateMember(member.id, { name, email, role, avatarUrl });
   };
+
+  const canChangeRole = currentUser.role === Role.Owner;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -77,11 +80,11 @@ const MemberEditModal: React.FC<MemberEditModalProps> = ({ member, onClose, onUp
                 value={role}
                 onChange={(e) => setRole(e.target.value as Role)}
                 className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white disabled:bg-slate-100 text-slate-900"
-                disabled // For now, let's disable role change as it might have wider implications not handled.
+                disabled={!canChangeRole}
               >
                 {Object.values(Role).map(r => <option key={r} value={r}>{r}</option>)}
               </select>
-               <p className="text-xs text-slate-500 mt-1">Role changes are disabled in this view.</p>
+               {!canChangeRole && <p className="text-xs text-slate-500 mt-1">Only owners can change member roles.</p>}
             </div>
           </div>
           <div className="p-4 bg-slate-50 border-t flex justify-end space-x-2">

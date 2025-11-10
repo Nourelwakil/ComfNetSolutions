@@ -57,7 +57,7 @@ const MyTasksView: React.FC<MyTasksViewProps> = ({ tasks, members, currentUser, 
                     <div className="flex items-center">
                         {task.assignedToIds.slice(0, 3).map((id, index) => {
                             const member = getMember(id);
-                            return member ? <img key={id} src={member.avatarUrl} title={member.name} alt={member.name} className={`w-8 h-8 rounded-full border-2 border-white ${index > 0 ? '-ml-3' : ''}`} /> : null;
+                            return member ? <img key={id} src={member.avatarUrl} title={member.name} alt={member.name} className={`w-8 h-8 rounded-full border-2 border-white ${index > 0 ? '-ml-3' : ''} ${member.isDeleted ? 'opacity-50' : ''}`} /> : null;
                         })}
                         {task.assignedToIds.length > 3 && (
                             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-xs font-semibold text-slate-600 border-2 border-white -ml-3">+{task.assignedToIds.length - 3}</span>

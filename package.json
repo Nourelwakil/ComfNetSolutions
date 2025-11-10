@@ -1,5 +1,5 @@
 {
-  "name": "comfnet-solutions-progress-bar",
+  "name": "copy-of-copy-of-comfnet-solutions-progress-bar",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "firebase": "^12.5.0",
+    "@firebase/app": "^0.14.5",
+    "@firebase/auth": "^1.11.1",
+    "@firebase/firestore": "^4.9.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

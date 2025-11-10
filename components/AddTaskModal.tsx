@@ -1,26 +1,27 @@
-
-
 import React, { useState, useRef } from 'react';
-import { Member } from '../types';
+import { Member, Team } from '../types';
 import { XCircleIcon } from './icons';
 import { TASK_COLORS } from '../constants';
 
 interface AddTaskModalProps {
   members: Member[];
+  teams: Team[];
   currentUser: Member;
   onClose: () => void;
-  onAddTask: (taskData: { title: string; description: string; assignedToIds: string[]; dueDate: string; color: string }) => void;
+  onAddTask: (taskData: { title: string; description: string; assignedToIds: string[]; dueDate: string; color: string; teamId: string; }) => Promise<void>;
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ members, currentUser, onClose, onAddTask }) => {
+const AddTaskModal: React.FC<AddTaskModalProps> = ({ members, teams, currentUser, onClose, onAddTask }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [assignedToIds, setAssignedToIds] = useState([currentUser.id]);
   const [dueDate, setDueDate] = useState('');
   const [color, setColor] = useState(TASK_COLORS[0].name);
+  const [teamId, setTeamId] = useState(teams[0]?.id || '');
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isList, setIsList] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const descriptionRef = useRef<HTMLDivElement>(null);
 
@@ -47,10 +48,18 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ members, currentUser, onClo
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (title.trim() && assignedToIds.length > 0 && dueDate) {
-      onAddTask({ title, description, assignedToIds, dueDate, color });
+    if (title.trim() && assignedToIds.length > 0 && dueDate && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        await onAddTask({ title, description, assignedToIds, dueDate, color, teamId });
+        onClose();
+      } catch (error) {
+        console.error("Failed to add task:", error);
+        alert("There was an error adding the task. Please try again.");
+        setIsSubmitting(false);
+      }
     } else if (assignedToIds.length === 0) {
       alert('Please assign the task to at least one member.');
     }
@@ -66,11 +75,27 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ members, currentUser, onClo
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-slate-700">Title</label>
               <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900" required />
             </div>
+             {teams.length > 0 && (
+                <div>
+                    <label htmlFor="team" className="block text-sm font-medium text-slate-700">Team</label>
+                    <select
+                        id="team"
+                        value={teamId}
+                        onChange={(e) => setTeamId(e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900"
+                    >
+                        <option value="">No Team</option>
+                        {teams.map(team => (
+                            <option key={team.id} value={team.id}>{team.name}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-slate-700">Description</label>
               <div className="mt-1 border border-slate-300 rounded-md">
@@ -131,8 +156,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ members, currentUser, onClo
             </div>
           </div>
           <div className="p-4 bg-slate-50 border-t flex justify-end space-x-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-brand-primary border border-transparent rounded-md text-sm font-medium text-white hover:bg-brand-primary-dark">Add Task</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50" disabled={isSubmitting}>Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-brand-primary border border-transparent rounded-md text-sm font-medium text-white hover:bg-brand-primary-dark disabled:opacity-50" disabled={isSubmitting}>
+              {isSubmitting ? 'Adding...' : 'Add Task'}
+            </button>
           </div>
         </form>
       </div>

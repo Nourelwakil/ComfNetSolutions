@@ -1,21 +1,26 @@
-
 import React, { useState } from 'react';
 
 interface LoginPageProps {
-  onLogin: (email: string, password: string) => boolean;
+    onLogin: (email: string, password: string) => Promise<{success: boolean, error?: string}>;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = onLogin(email, password);
-    if (!success) {
-      setError('Invalid email or password.');
+    setError('');
+    setLoading(true);
+    
+    const result = await onLogin(email, password);
+    if (!result.success) {
+        setError(result.error || 'Invalid email or password.');
+        setLoading(false);
     }
+    // On success, the parent component's auth listener will handle the re-render.
   };
 
   return (
@@ -68,9 +73,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
+                disabled={loading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary disabled:opacity-50"
               >
-                Sign in
+                {loading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
